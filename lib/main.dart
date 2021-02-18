@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'package:admin/createNewAccount.dart';
+import 'package:admin/authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'dashboard.dart';
-import 'home.dart';
 import 'package:provider/provider.dart';
-import 'loginPane.dart';
 import 'model/userModel.dart';
 
 void main() {
@@ -88,10 +86,12 @@ class _AppState extends State<App> {
       create: (context) => userModel,
       child: MaterialApp(
         routes: {
-          '/': (context) => HomeWidget(),
-          '/dashboard': (context) => Dashboard(),
-          '/login': (context) => LoginAccountWidget(),
-          '/createaccount': (context) => RegisterNewAccountWidget(),
+          // '/': (context) => HomeWidget(),
+          '/': (context) => Dashboard(),
+          // '/dashboard': (context) => Dashboard(),
+          '/authentication': (context) => AuthenticationWidget(),
+          // '/login': (context) => LoginAccountWidget(),
+          // '/createaccount': (context) => RegisterNewAccountWidget(),
         },
       ),
     );
