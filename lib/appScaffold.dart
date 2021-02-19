@@ -19,11 +19,8 @@ class _AppScaffoldState extends State<AppScaffold> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // drawer: MyDrawer(),
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: () => null,
-        ),
         title: Text("Palm Beach Facial Plastic Surgery"),
         actions: [
           PopupMenuButton<String>(
@@ -75,6 +72,7 @@ class _AppScaffoldState extends State<AppScaffold> {
 
   void logout() {
     FirebaseAuth.instance.signOut();
+    Navigator.pushReplacementNamed(context, '/');
   }
 
   void settings() {}
