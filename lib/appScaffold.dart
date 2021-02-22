@@ -1,11 +1,14 @@
+import 'package:admin/model/userModel.dart';
+import 'package:admin/utility.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AppScaffold extends StatefulWidget {
   AppScaffold({
     @required this.body,
     Key key,
-    this.title,
+    this.title = 'Palm Beach Facial Plastic Surgery',
   }) : super(key: key);
 
   final String title;
@@ -16,43 +19,49 @@ class AppScaffold extends StatefulWidget {
 }
 
 class _AppScaffoldState extends State<AppScaffold> {
+  UserModel userModel;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // drawer: MyDrawer(),
-      appBar: AppBar(
-        title: Text("Palm Beach Facial Plastic Surgery"),
-        actions: [
-          PopupMenuButton<String>(
-            icon: Icon(Icons.person),
-            onSelected: menuSelection,
-            itemBuilder: (BuildContext context) {
-              return <PopupMenuEntry<String>>[
-                PopupMenuItem<String>(
-                  value: "Profile",
-                  child: Text("Profile"),
-                  // enabled: user != null,
-                ),
-                PopupMenuItem<String>(
-                  value: "Settings",
-                  child: Text("Settings"),
-                ),
-                PopupMenuItem<String>(
-                  value: "Logout",
-                  child: Text("Logout"),
-                  // enabled: user != null,
-                ),
-              ].toList();
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.person),
-            onPressed: () => null,
-          ),
-        ],
-      ),
-      body: widget.body,
-    );
+    return Consumer<UserModel>(builder: (context, uModel, child) {
+      userModel = uModel;
+
+      return Scaffold(
+        // drawer: MyDrawer(),
+        appBar: AppBar(
+          title: Text(widget.title),
+          actions: [
+            PopupMenuButton<String>(
+              icon: Icon(Icons.person),
+              onSelected: menuSelection,
+              itemBuilder: (BuildContext context) {
+                return <PopupMenuEntry<String>>[
+                  PopupMenuItem<String>(
+                    value: "Profile",
+                    enabled: Utility.isUserSignedIn(),
+                    child: Text("Profile"),
+                  ),
+                  PopupMenuItem<String>(
+                    value: "Settings",
+                    child: Text("Settings"),
+                  ),
+                  PopupMenuItem<String>(
+                    value: "Logout",
+                    enabled: Utility.isUserSignedIn(),
+                    child: Text("Logout"),
+                  ),
+                ].toList();
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.person),
+              onPressed: () => null,
+            ),
+          ],
+        ),
+        body: widget.body,
+      );
+    });
   }
 
   void menuSelection(String value) {
@@ -77,5 +86,7 @@ class _AppScaffoldState extends State<AppScaffold> {
 
   void settings() {}
 
-  void profile() {}
+  void profile() {
+    Navigator.pushNamed(context, '/profile');
+  }
 }

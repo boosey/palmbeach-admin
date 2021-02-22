@@ -49,6 +49,7 @@ class _AuthenticationWidgetState extends State<AuthenticationWidget> {
     var details = Details[mode];
 
     return AppScaffold(
+      title: 'Sign In',
       body: Center(
         child: Column(
           children: <Widget>[

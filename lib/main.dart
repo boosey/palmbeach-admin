@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:admin/authentication.dart';
+import 'package:admin/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'dashboard.dart';
 import 'model/userModel.dart';
 
@@ -28,6 +30,7 @@ class _AppState extends State<App> {
         subscribeToAuthStream();
       });
       setState(() {
+        print('setting initialized');
         _initialized = true;
       });
     } catch (e) {
@@ -54,12 +57,14 @@ class _AppState extends State<App> {
   void subscribeToAuthStream() {
     try {
       authStream = FirebaseAuth.instance.authStateChanges().listen((User user) {
-        if (user == null) {
-          userModel.loggedOut();
-        } else {
-          print('user logged in: ' + user.email);
-          userModel.loggedIn(user);
-        }
+        setState(() {
+          if (user == null) {
+            userModel.loggedOut();
+          } else {
+            print('user logged in: ' + user.email);
+            userModel.loggedIn(user);
+          }
+        });
       });
     } on Exception catch (e) {
       print('error: ' + e.toString());
@@ -81,16 +86,16 @@ class _AppState extends State<App> {
       return Loading();
     }
 
-    // return ChangeNotifierProvider(
-    //   create: (context) => userModel,
-    //   child:
-
-    return MaterialApp(
-      routes: {
-        '/': (context) => Dashboard(),
-        '/authentication': (context) => AuthenticationWidget(),
-      },
-      // ),
+    return ChangeNotifierProvider(
+      create: (context) => userModel,
+      child: MaterialApp(
+        initialRoute: '/',
+        routes: {
+          '/': (context) => Dashboard(),
+          '/authentication': (context) => AuthenticationWidget(),
+          '/profile': (context) => ProfileScreen(),
+        },
+      ),
     );
   }
 }
