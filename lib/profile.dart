@@ -1,4 +1,5 @@
 import 'package:admin/model/userModel.dart';
+import 'package:admin/adminOnly.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'appScaffold.dart';
@@ -62,14 +63,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             labelText: 'Last Name',
                           ),
                         ),
-                        Row(
-                          children: [
-                            Text('Administrator'),
-                            Switch(
-                              value: userModel.isAdmin,
-                              onChanged: adminSwitchChanged,
-                            ),
-                          ],
+                        AdminOnly(
+                          child: Row(
+                            children: [
+                              Text('Administrator'),
+                              Switch(
+                                value: userModel.isAdmin,
+                                onChanged: adminSwitchChanged,
+                              ),
+                            ],
+                          ),
                         ),
                         ElevatedButton(
                           onPressed: saveProfile,
@@ -99,9 +102,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void adminSwitchChanged(bool value) {
-    setState(() {
-      userModel.isAdmin = value;
-    });
+    // setState(() {
+    //   userModel.isAdmin = value;
+    // });
 
     print('new value: ' + userModel.isAdmin.toString());
   }

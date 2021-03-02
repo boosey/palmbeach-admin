@@ -56,10 +56,7 @@ class _AuthenticationWidgetState extends State<AuthenticationWidget> {
             Container(
               width: 400,
               height: 300,
-              child:
-                  // Consumer<UserModel>(builder: (context, userModel, child) {
-                  //   return
-                  Form(
+              child: Form(
                 key: _formKey,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,

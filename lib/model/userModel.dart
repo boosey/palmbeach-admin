@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,6 +22,7 @@ class UserModel extends ChangeNotifier {
   }
 
   loggedOut() {
+    if (profile != null) profile.cancelSubscription();
     _user = null;
     notifyListeners();
   }
@@ -53,16 +56,27 @@ class UserProfile {
   final CollectionReference users =
       FirebaseFirestore.instance.collection('users');
   final String uid;
+  StreamSubscription subscription;
   String firstName = '';
   String lastName = '';
 
   UserProfile(this.uid) {
-    users.doc(uid).get().then((snapshot) {
-      firstName = snapshot.data()['firstName'];
-      lastName = snapshot.data()['lastName'];
-    }).onError((error, stackTrace) {
-      print('User Profile fetch error: ' + error);
-    });
+    subscription = users.doc(uid).snapshots().listen(
+      (snapshot) {
+        var profile = snapshot.data();
+        if (profile != null && profile.containsKey('firstName')) {
+          firstName = snapshot.data()['firstName'];
+          lastName = snapshot.data()['lastName'];
+        }
+      },
+      onError: ((error, stackTrace) {
+        print('User Profile fetch error: ' + error);
+      }),
+    );
+  }
+
+  void cancelSubscription() {
+    if (subscription != null) subscription.cancel();
   }
 
   void save() {

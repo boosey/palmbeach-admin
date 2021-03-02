@@ -2,6 +2,7 @@ import 'package:admin/appScaffold.dart';
 import 'package:admin/utility.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'cautionManagementUI.dart';
 import 'model/userModel.dart';
 
 class Dashboard extends StatelessWidget {
@@ -38,12 +39,10 @@ class Dashboard extends StatelessWidget {
         child: Text('Sign In'),
       );
     } else {
-      return Text(
-        'Dashboard' +
-            (Utility.isUserSignedIn()
-                ? userModel.firebaseUser.email
-                : 'No User Signed In'),
-      );
+      if (Utility.isUserSignedIn()) {
+        return CautionManagementUI();
+      } else {}
+      return Text('Dashboard: ' + 'No User Signed In');
     }
   }
 }

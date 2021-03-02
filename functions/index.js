@@ -18,3 +18,13 @@ exports.clearAdminClaim = functions.https.onCall((data, context) =>{
       .setCustomUserClaims(data, null);
   return "OK";
 });
+
+exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
+  const db = admin.firestore();
+  const docRef = db.collection("users").doc(user.uid);
+
+  docRef.set({
+    firstName: "",
+    lastName: "",
+  });
+});
