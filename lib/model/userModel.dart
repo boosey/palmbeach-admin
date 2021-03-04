@@ -6,23 +6,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
 class UserModel extends ChangeNotifier {
-  User _user;
-  UserProfile profile;
+  User? _user;
+  late UserProfile profile;
   bool isAdmin = false;
 
-  User get firebaseUser => _user;
+  User? get firebaseUser => _user;
 
   loggedIn(User u) async {
     _user = u;
-    profile = UserProfile(_user.uid);
-    var tokenResult = await _user.getIdTokenResult();
-    isAdmin = tokenResult.claims.containsKey('admin');
+    profile = UserProfile(_user!.uid);
+    var tokenResult = await _user!.getIdTokenResult();
+    isAdmin = tokenResult.claims!.containsKey('admin');
 
     notifyListeners();
   }
 
   loggedOut() {
-    profile?.cancelSubscription();
+    profile.cancelSubscription();
     _user = null;
     notifyListeners();
   }
@@ -42,13 +42,13 @@ class UserModel extends ChangeNotifier {
   void setAdminClaim() async {
     HttpsCallable manageAdminClaim =
         FirebaseFunctions.instance.httpsCallable('setAdminClaim');
-    await manageAdminClaim.call(_user.uid);
+    await manageAdminClaim.call(_user!.uid);
   }
 
   void clearAdminClaim() async {
     HttpsCallable manageAdminClaim =
         FirebaseFunctions.instance.httpsCallable('clearAdminClaim');
-    await manageAdminClaim.call(_user.uid);
+    await manageAdminClaim.call(_user!.uid);
   }
 }
 
@@ -56,7 +56,7 @@ class UserProfile {
   final CollectionReference users =
       FirebaseFirestore.instance.collection('users');
   final String uid;
-  StreamSubscription subscription;
+  late StreamSubscription subscription;
   String firstName = '';
   String lastName = '';
 
@@ -65,8 +65,8 @@ class UserProfile {
       (snapshot) {
         var profile = snapshot.data();
         if (profile != null && profile.containsKey('firstName')) {
-          firstName = snapshot.data()['firstName'];
-          lastName = snapshot.data()['lastName'];
+          firstName = snapshot.data()!['firstName'];
+          lastName = snapshot.data()!['lastName'];
         }
       },
       onError: ((error, stackTrace) {
@@ -76,7 +76,7 @@ class UserProfile {
   }
 
   void cancelSubscription() {
-    subscription?.cancel();
+    subscription.cancel();
   }
 
   void save() {

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 class AdminOnly extends StatelessWidget {
   final Widget child;
 
-  AdminOnly({Key key, @required this.child}) : super(key: key);
+  AdminOnly({required this.child});
 
   @override
   Widget build(BuildContext context) {

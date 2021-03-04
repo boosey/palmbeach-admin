@@ -5,17 +5,17 @@ import 'package:provider/provider.dart';
 import 'appScaffold.dart';
 
 class ProfileScreen extends StatefulWidget {
-  ProfileScreen({Key key}) : super(key: key);
+  ProfileScreen({Key? key}) : super(key: key);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  TextEditingController _firstNameController;
-  TextEditingController _lastNameController;
+  late TextEditingController _firstNameController;
+  late TextEditingController _lastNameController;
   final _formKey = GlobalKey<FormState>();
-  UserModel userModel;
+  late UserModel userModel;
 
   void initState() {
     super.initState();
@@ -91,7 +91,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void saveProfile() {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       UserProfile p = userModel.profile;
       p.firstName = _firstNameController.text;
       p.lastName = _lastNameController.text;

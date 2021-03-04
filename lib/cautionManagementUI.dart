@@ -4,20 +4,14 @@ import 'cautionForm.dart';
 import 'model/caution.dart';
 
 class CautionManagementUI extends StatefulWidget {
-  CautionManagementUI({Key key}) : super(key: key);
+  CautionManagementUI({Key? key}) : super(key: key);
 
   @override
   _CautionManagementUIState createState() => _CautionManagementUIState();
 }
 
 class _CautionManagementUIState extends State<CautionManagementUI> {
-  CautionModel newCM;
-
-  @override
-  void didUpdateWidget(Widget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    print('in didUpdateWidget');
-  }
+  CautionModel newCM = CautionModel.empty();
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +27,7 @@ class _CautionManagementUIState extends State<CautionManagementUI> {
                   mini: true,
                   onPressed: () {
                     setState(() {
-                      newCM = CautionModel(
-                        '',
-                        '',
-                      );
+                      newCM = CautionModel.createNew();
                     });
                   },
                   child: Icon(Icons.add),
@@ -46,8 +37,9 @@ class _CautionManagementUIState extends State<CautionManagementUI> {
             ],
           ),
           Visibility(
-            visible: newCM != null,
+            visible: newCM.isUnknownState(),
             child: CautionWidget(
+              key: Key('newCMFormWidget'),
               cautionModel: newCM,
               onSaved: removeNewCM,
               onDeleted: removeNewCM,
@@ -57,7 +49,7 @@ class _CautionManagementUIState extends State<CautionManagementUI> {
             stream: CautionModelCollection().stream(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                snapshot.data.forEach((e) {
+                snapshot.data!.forEach((e) {
                   print('received: ' +
                       e.name +
                       ' : ' +
@@ -66,10 +58,10 @@ class _CautionManagementUIState extends State<CautionManagementUI> {
               }
               return snapshot.hasData
                   ? Column(
-                      children: snapshot.data
+                      children: snapshot.data!
                           .map<CautionWidget>(
                             (cm) => CautionWidget(
-                              key: Key(cm.id),
+                              key: Key(cm.id!),
                               cautionModel: cm,
                             ),
                           )
@@ -84,7 +76,7 @@ class _CautionManagementUIState extends State<CautionManagementUI> {
 
   void removeNewCM() {
     setState(() {
-      newCM = null;
+      newCM = CautionModel.empty();
     });
   }
 }

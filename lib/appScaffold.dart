@@ -6,10 +6,9 @@ import 'package:provider/provider.dart';
 
 class AppScaffold extends StatefulWidget {
   AppScaffold({
-    @required this.body,
-    Key key,
+    required this.body,
     this.title = 'Palm Beach Facial Plastic Surgery',
-  }) : super(key: key);
+  });
 
   final String title;
   final Widget body;
@@ -19,7 +18,7 @@ class AppScaffold extends StatefulWidget {
 }
 
 class _AppScaffoldState extends State<AppScaffold> {
-  UserModel userModel;
+  late UserModel userModel;
 
   @override
   Widget build(BuildContext context) {

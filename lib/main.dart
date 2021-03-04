@@ -20,7 +20,7 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   bool _initialized = false;
   bool _error = false;
-  StreamSubscription<User> authStream;
+  late StreamSubscription<User?> authStream;
   UserModel userModel = UserModel();
 
   void initializeFlutterFire() async {
@@ -48,18 +48,18 @@ class _AppState extends State<App> {
 
   @override
   void dispose() {
-    authStream?.cancel();
+    authStream.cancel();
     super.dispose();
   }
 
   void subscribeToAuthStream() {
     try {
-      authStream = FirebaseAuth.instance.authStateChanges().listen((User user) {
+      authStream = FirebaseAuth.instance.authStateChanges().listen((user) {
         setState(() {
           if (user == null) {
             userModel.loggedOut();
           } else {
-            print('user logged in: ' + user.email);
+            print('user logged in: ' + user.email!);
             userModel.loggedIn(user);
           }
         });
@@ -94,7 +94,6 @@ class _AppState extends State<App> {
 }
 
 class Loading extends StatelessWidget {
-  Loading({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -113,7 +112,6 @@ class Loading extends StatelessWidget {
 }
 
 class SomethingWentWrong extends StatelessWidget {
-  SomethingWentWrong({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

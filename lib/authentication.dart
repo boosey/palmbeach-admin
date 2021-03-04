@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'appScaffold.dart';
 
 class AuthenticationWidget extends StatefulWidget {
-  AuthenticationWidget({Key key}) : super(key: key);
-
   @override
   _AuthenticationWidgetState createState() => _AuthenticationWidgetState();
 }
@@ -28,8 +26,8 @@ class _AuthenticationWidgetState extends State<AuthenticationWidget> {
   };
 
   Mode mode = Mode.login;
-  TextEditingController _uidController;
-  TextEditingController _pwdController;
+  late TextEditingController _uidController;
+  late TextEditingController _pwdController;
   final _formKey = GlobalKey<FormState>();
 
   void initState() {
@@ -46,7 +44,7 @@ class _AuthenticationWidgetState extends State<AuthenticationWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var details = Details[mode];
+    var details = Details[mode]!;
 
     return AppScaffold(
       title: 'Sign In',
@@ -62,7 +60,7 @@ class _AuthenticationWidgetState extends State<AuthenticationWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Text(
-                      details[Item.heading],
+                      details[Item.heading]!,
                     ),
                     TextFormField(
                       controller: _uidController,
@@ -71,7 +69,7 @@ class _AuthenticationWidgetState extends State<AuthenticationWidget> {
                         labelText: 'User Id',
                       ),
                       validator: (value) {
-                        if (EmailValidator.validate(value)) {
+                        if (EmailValidator.validate(value!)) {
                           return null;
                         } else {
                           return "Please enter a valid email address";
@@ -86,7 +84,7 @@ class _AuthenticationWidgetState extends State<AuthenticationWidget> {
                         labelText: 'Password',
                       ),
                       validator: (value) {
-                        if (value.length >= 8) {
+                        if (value!.length >= 8) {
                           return null;
                         } else {
                           return "Password must be at least 8 characters";
@@ -95,7 +93,7 @@ class _AuthenticationWidgetState extends State<AuthenticationWidget> {
                     ),
                     ElevatedButton(
                       onPressed: executeAction,
-                      child: Text(details[Item.button]),
+                      child: Text(details[Item.button]!),
                     ),
                   ],
                 ),
@@ -104,7 +102,7 @@ class _AuthenticationWidgetState extends State<AuthenticationWidget> {
             ),
             TextButton(
               onPressed: () => executeLink(),
-              child: Text(details[Item.link]),
+              child: Text(details[Item.link]!),
             ),
           ],
         ),
@@ -123,7 +121,7 @@ class _AuthenticationWidgetState extends State<AuthenticationWidget> {
   }
 
   void executeAction() {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       if (mode == Mode.login)
         login(
           _uidController.text,

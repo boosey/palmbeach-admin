@@ -1,17 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-enum LifecycleState { created, saved, invalid, deleted }
+enum LifecycleState { created, saved, invalid, deleted, unknown }
 
 class CautionModel extends ChangeNotifier {
   static CollectionReference _cautionsCollection =
       FirebaseFirestore.instance.collection('cautions');
 
-  String id;
-  String _name;
-  String _cautionText;
-  LifecycleState lifecycleState;
-  bool _dirty;
+  String? id;
+  String _name = '';
+  String _cautionText = '';
+  LifecycleState lifecycleState = LifecycleState.unknown;
+  bool _dirty = false;
 
   String get cautionText => _cautionText;
 
@@ -55,7 +55,13 @@ class CautionModel extends ChangeNotifier {
     return lifecycleState == LifecycleState.deleted;
   }
 
-  CautionModel(this._name, this._cautionText) {
+  bool isUnknownState() {
+    return lifecycleState == LifecycleState.unknown;
+  }
+
+  CautionModel.empty();
+
+  CautionModel.createNew() {
     lifecycleState = LifecycleState.created;
   }
 
@@ -122,8 +128,8 @@ class CautionModelCollection extends ChangeNotifier {
       var docs = collectionSnap.docs;
 
       docs.sort((d1, d2) {
-        return (d1.data()['name'] as String)
-            .compareTo(d2.data()['name'] as String);
+        return (d1.data()!['name'] as String)
+            .compareTo(d2.data()!['name'] as String);
       });
 
       docs.forEach((doc) {

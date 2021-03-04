@@ -6,8 +6,6 @@ import 'cautionManagementUI.dart';
 import 'model/userModel.dart';
 
 class Dashboard extends StatelessWidget {
-  Dashboard({Key key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     // if (Utility.isNoUserSignedIn()) {

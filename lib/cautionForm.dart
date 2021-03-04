@@ -4,12 +4,12 @@ import 'package:quiver/async.dart';
 
 class CautionWidget extends StatefulWidget {
   final CautionModel cautionModel;
-  final Function onDeleted;
-  final Function onSaved;
+  final Function? onDeleted;
+  final Function? onSaved;
 
   CautionWidget({
-    Key key,
-    @required this.cautionModel,
+    required Key key,
+    required this.cautionModel,
     this.onDeleted,
     this.onSaved,
   }) : super(key: key);
@@ -19,9 +19,14 @@ class CautionWidget extends StatefulWidget {
 }
 
 class _CautionWidgetState extends State<CautionWidget> {
-  TextEditingController nameCtlr;
-  TextEditingController cautionCtlr;
-  CountdownTimer timer;
+  late TextEditingController nameCtlr;
+  late TextEditingController cautionCtlr;
+  CountdownTimer timer = CountdownTimer(
+    Duration(seconds: 0),
+    Duration(
+      seconds: 1,
+    ),
+  );
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -39,9 +44,7 @@ class _CautionWidgetState extends State<CautionWidget> {
   }
 
   void validateAndSave(String value) {
-    if (timer != null && timer.isRunning) {
-      timer.cancel();
-    }
+    timer.cancel();
     timer = CountdownTimer(Duration(seconds: 1), Duration(seconds: 1));
     timer.forEach((element) {
       if (!widget.cautionModel.isNew()) {
@@ -83,7 +86,7 @@ class _CautionWidgetState extends State<CautionWidget> {
                     labelText: 'Name',
                   ),
                   validator: (value) {
-                    if (value.length >= 3) {
+                    if (value!.length >= 3) {
                       return null;
                     } else {
                       return "Names must be at least 3 characters";
@@ -105,7 +108,7 @@ class _CautionWidgetState extends State<CautionWidget> {
                     labelText: 'Caution',
                   ),
                   validator: (value) {
-                    if (value.length >= 10) {
+                    if (value!.length >= 10) {
                       return null;
                     } else {
                       return "Cautions must be at least 10 characters";
