@@ -14,6 +14,12 @@ class _CautionManagementUIState extends State<CautionManagementUI> {
   CautionModel newCM;
 
   @override
+  void didUpdateWidget(Widget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    print('in didUpdateWidget');
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(
@@ -43,21 +49,30 @@ class _CautionManagementUIState extends State<CautionManagementUI> {
             visible: newCM != null,
             child: CautionWidget(
               cautionModel: newCM,
-              onDeleted: () {
-                setState(() {
-                  newCM = null;
-                });
-              },
+              onSaved: removeNewCM,
+              onDeleted: removeNewCM,
             ),
           ),
           StreamBuilder<List<CautionModel>>(
             stream: CautionModelCollection().stream(),
             builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                snapshot.data.forEach((e) {
+                  print('received: ' +
+                      e.name +
+                      ' : ' +
+                      e.lifecycleState.toString());
+                });
+              }
               return snapshot.hasData
                   ? Column(
                       children: snapshot.data
                           .map<CautionWidget>(
-                              (cm) => CautionWidget(cautionModel: cm))
+                            (cm) => CautionWidget(
+                              key: Key(cm.id),
+                              cautionModel: cm,
+                            ),
+                          )
                           .toList())
                   : Text('Add some cautions');
             },
@@ -65,5 +80,11 @@ class _CautionManagementUIState extends State<CautionManagementUI> {
         ],
       ),
     );
+  }
+
+  void removeNewCM() {
+    setState(() {
+      newCM = null;
+    });
   }
 }

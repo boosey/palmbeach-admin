@@ -44,10 +44,23 @@ class _CautionWidgetState extends State<CautionWidget> {
     }
     timer = CountdownTimer(Duration(seconds: 1), Duration(seconds: 1));
     timer.forEach((element) {
-      widget.cautionModel.name = nameCtlr.text;
-      widget.cautionModel.cautionText = cautionCtlr.text;
-      widget.cautionModel.save();
+      if (!widget.cautionModel.isNew()) {
+        widget.cautionModel.name = nameCtlr.text;
+        widget.cautionModel.cautionText = cautionCtlr.text;
+        widget.cautionModel.save();
+        widget.onSaved?.call();
+      }
     });
+  }
+
+  void validateAndSaveNew() {
+    widget.cautionModel.setSaved();
+    validateAndSave('');
+  }
+
+  void delete() {
+    widget.cautionModel.delete();
+    widget.onDeleted?.call();
   }
 
   @override
@@ -108,12 +121,8 @@ class _CautionWidgetState extends State<CautionWidget> {
                 splashRadius: 18,
                 iconSize: 24,
                 padding: EdgeInsets.fromLTRB(12, 22, 12, 22),
-                // constraints: const BoxConstraints(
-                //   maxHeight: 24.0,
-                //   maxWidth: 24.0,
-                // ),
                 onPressed: () {
-                  widget.onSaved.call();
+                  validateAndSaveNew();
                 },
               ),
             ),
@@ -122,13 +131,7 @@ class _CautionWidgetState extends State<CautionWidget> {
               splashRadius: 18,
               iconSize: 24,
               padding: EdgeInsets.fromLTRB(12, 22, 12, 22),
-              // constraints: const BoxConstraints(
-              //   maxHeight: 24.0,
-              //   maxWidth: 24.0,
-              // ),
-              onPressed: () {
-                widget.onDeleted.call();
-              },
+              onPressed: delete,
             ),
           ],
         ),

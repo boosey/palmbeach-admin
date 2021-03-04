@@ -48,9 +48,7 @@ class _AppState extends State<App> {
 
   @override
   void dispose() {
-    if (authStream != null) {
-      unsubscribeFromAuthStream();
-    }
+    authStream?.cancel();
     super.dispose();
   }
 
@@ -69,11 +67,6 @@ class _AppState extends State<App> {
     } on Exception catch (e) {
       print('error: ' + e.toString());
     }
-  }
-
-  void unsubscribeFromAuthStream() {
-    authStream.cancel();
-    authStream = null;
   }
 
   @override

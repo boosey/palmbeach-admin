@@ -1,15 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-enum LifecycleState { created, saved, dirty, invalid, deleted }
+enum LifecycleState { created, saved, invalid, deleted }
 
 class CautionModel extends ChangeNotifier {
   static CollectionReference _cautionsCollection =
       FirebaseFirestore.instance.collection('cautions');
-  LifecycleState _lifecycleState;
+
   String id;
   String _name;
   String _cautionText;
+  LifecycleState lifecycleState;
+  bool _dirty;
 
   String get cautionText => _cautionText;
 
@@ -26,24 +28,44 @@ class CautionModel extends ChangeNotifier {
   }
 
   void setDirty() {
-    _lifecycleState = LifecycleState.dirty;
+    _dirty = true;
+  }
+
+  void clearDirty() {
+    _dirty = false;
+  }
+
+  bool isDirty() {
+    return _dirty;
   }
 
   void setSaved() {
-    _lifecycleState = LifecycleState.saved;
+    lifecycleState = LifecycleState.saved;
+  }
+
+  bool isSaved() {
+    return lifecycleState == LifecycleState.saved;
   }
 
   bool isNew() {
-    return _lifecycleState == LifecycleState.created;
+    return lifecycleState == LifecycleState.created;
+  }
+
+  bool isDeleted() {
+    return lifecycleState == LifecycleState.deleted;
   }
 
   CautionModel(this._name, this._cautionText) {
-    _lifecycleState = LifecycleState.created;
+    lifecycleState = LifecycleState.created;
   }
 
-  CautionModel.preloaded(this.id, this._name, this._cautionText) {
-    _lifecycleState = LifecycleState.saved;
-    print("Caution Model preloaded: " + this.name);
+  CautionModel.preloaded(
+    this.id,
+    this._name,
+    this._cautionText,
+    int lifecycleStateIdx,
+  ) {
+    this.lifecycleState = LifecycleState.values.elementAt(lifecycleStateIdx);
   }
 
   CautionModel.load(String _id) {
@@ -57,24 +79,29 @@ class CautionModel extends ChangeNotifier {
     return Map.from({
       "name": name,
       "cautionText": cautionText,
+      "lifecycleStateIdx": lifecycleState.index,
     });
   }
 
   void save() {
-    if (this.isValid()) {
-      if (_lifecycleState == LifecycleState.created) {
-        setSaved();
-        _cautionsCollection.add(documentMap());
-      } else if (_lifecycleState == LifecycleState.dirty) {
-        setSaved();
+    if (isDirty()) {
+      if (isDeleted()) {
         _cautionsCollection.doc(id).set(documentMap());
-      } else if (_lifecycleState == LifecycleState.deleted) {
-        // throw item deleted
+        clearDirty();
+      } else if (isNew() || isSaved()) {
+        if (isValid()) {
+          setSaved();
+          _cautionsCollection.doc(id).set(documentMap());
+        } else {
+          lifecycleState = LifecycleState.invalid;
+        }
       }
-    } else {
-      _lifecycleState = LifecycleState.invalid;
-      // throw invalid error
     }
+  }
+
+  void delete() {
+    lifecycleState = LifecycleState.deleted;
+    _cautionsCollection.doc(id).set(documentMap());
   }
 
   bool isValid() {
@@ -88,14 +115,23 @@ class CautionModelCollection extends ChangeNotifier {
 
   Stream<List<CautionModel>> stream() {
     return _cautionsCollection
+        .where('lifecycleStateIdx', isEqualTo: LifecycleState.saved.index)
         .snapshots()
         .map<List<CautionModel>>((collectionSnap) {
       List<CautionModel> modelList = [];
-      collectionSnap.docs.forEach((doc) {
+      var docs = collectionSnap.docs;
+
+      docs.sort((d1, d2) {
+        return (d1.data()['name'] as String)
+            .compareTo(d2.data()['name'] as String);
+      });
+
+      docs.forEach((doc) {
         CautionModel cm = CautionModel.preloaded(
           doc.id,
           doc.get('name'),
           doc.get('cautionText'),
+          doc.get('lifecycleStateIdx'),
         );
         modelList.add(cm);
       });

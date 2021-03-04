@@ -22,7 +22,7 @@ class UserModel extends ChangeNotifier {
   }
 
   loggedOut() {
-    if (profile != null) profile.cancelSubscription();
+    profile?.cancelSubscription();
     _user = null;
     notifyListeners();
   }
@@ -76,7 +76,7 @@ class UserProfile {
   }
 
   void cancelSubscription() {
-    if (subscription != null) subscription.cancel();
+    subscription?.cancel();
   }
 
   void save() {
