@@ -1,4 +1,4 @@
-import 'dart:async';
+// import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -22,9 +22,11 @@ class UserModel extends ChangeNotifier {
   }
 
   loggedOut() {
-    profile.cancelSubscription();
-    _user = null;
-    notifyListeners();
+    if (_user != null) {
+      // profile.cancelSubscription();
+      _user = null;
+      notifyListeners();
+    }
   }
 
   bool isLoggedIn() {
@@ -56,27 +58,24 @@ class UserProfile {
   final CollectionReference users =
       FirebaseFirestore.instance.collection('users');
   final String uid;
-  late StreamSubscription subscription;
+  // late StreamSubscription subscription;
   String firstName = '';
   String lastName = '';
 
   UserProfile(this.uid) {
-    subscription = users.doc(uid).snapshots().listen(
-      (snapshot) {
-        var profile = snapshot.data();
-        if (profile != null && profile.containsKey('firstName')) {
-          firstName = snapshot.data()!['firstName'];
-          lastName = snapshot.data()!['lastName'];
-        }
-      },
-      onError: ((error, stackTrace) {
-        print('User Profile fetch error: ' + error);
-      }),
-    );
-  }
+    print('uid: ' + this.uid);
 
-  void cancelSubscription() {
-    subscription.cancel();
+    firstName = "Hard";
+    lastName = "Coded";
+
+    print("hard coded name set");
+
+    // users.doc(uid).get().then((profile) {
+    //   firstName = profile['firstName'];
+    //   lastName = profile['lastName'];
+    // }).onError((error, stackTrace) {
+    //   print("Error: " + error.toString());
+    // });
   }
 
   void save() {

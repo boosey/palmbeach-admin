@@ -37,7 +37,7 @@ class _CautionManagementUIState extends State<CautionManagementUI> {
             ],
           ),
           Visibility(
-            visible: newCM.isUnknownState(),
+            visible: newCM.isNew(),
             child: CautionWidget(
               key: Key('newCMFormWidget'),
               cautionModel: newCM,
@@ -48,6 +48,7 @@ class _CautionManagementUIState extends State<CautionManagementUI> {
           StreamBuilder<List<CautionModel>>(
             stream: CautionModelCollection().stream(),
             builder: (context, snapshot) {
+              print('in builder');
               if (snapshot.hasData) {
                 snapshot.data!.forEach((e) {
                   print('received: ' +
@@ -56,6 +57,7 @@ class _CautionManagementUIState extends State<CautionManagementUI> {
                       e.lifecycleState.toString());
                 });
               }
+
               return snapshot.hasData
                   ? Column(
                       children: snapshot.data!

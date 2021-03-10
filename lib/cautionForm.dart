@@ -23,9 +23,7 @@ class _CautionWidgetState extends State<CautionWidget> {
   late TextEditingController cautionCtlr;
   CountdownTimer timer = CountdownTimer(
     Duration(seconds: 0),
-    Duration(
-      seconds: 1,
-    ),
+    Duration(seconds: 1),
   );
   final _formKey = GlobalKey<FormState>();
 
@@ -97,36 +95,42 @@ class _CautionWidgetState extends State<CautionWidget> {
             ),
             Expanded(
               flex: 3,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
-                child: TextFormField(
-                  controller: cautionCtlr,
-                  maxLines: null,
-                  onChanged: validateAndSave,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Caution',
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
+                      child: TextFormField(
+                        controller: cautionCtlr,
+                        maxLines: null,
+                        onChanged: validateAndSave,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Caution',
+                        ),
+                        validator: (value) {
+                          if (value!.length >= 10) {
+                            return null;
+                          } else {
+                            return "Cautions must be at least 10 characters";
+                          }
+                        },
+                      ),
+                    ),
                   ),
-                  validator: (value) {
-                    if (value!.length >= 10) {
-                      return null;
-                    } else {
-                      return "Cautions must be at least 10 characters";
-                    }
-                  },
-                ),
-              ),
-            ),
-            Visibility(
-              visible: widget.cautionModel.isNew(),
-              child: IconButton(
-                icon: Icon(Icons.check),
-                splashRadius: 18,
-                iconSize: 24,
-                padding: EdgeInsets.fromLTRB(12, 22, 12, 22),
-                onPressed: () {
-                  validateAndSaveNew();
-                },
+                  Visibility(
+                    visible: widget.cautionModel.isNew(),
+                    child: IconButton(
+                      icon: Icon(Icons.check),
+                      splashRadius: 18,
+                      iconSize: 24,
+                      padding: EdgeInsets.fromLTRB(12, 22, 12, 22),
+                      onPressed: () {
+                        validateAndSaveNew();
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
             IconButton(
